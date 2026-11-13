@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Visita Guiada</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Figtree:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --areia: #eadbbe;
+        --areia-clara: #f5ecd9;
+        --cal: #fbf6ea;
+        --terracota: #a94f31;
+        --terracota-escura: #7c3720;
+        --argila: #4a2a1e;
+        --azulejo: #2c5e7a;
+        --serif: "Fraunces", Georgia, "Times New Roman", serif;
+        --sans: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--areia);
+        color: var(--argila);
+        font-family: var(--sans);
+        line-height: 1.5;
+        padding: env(safe-area-inset-top) env(safe-area-inset-right)
+          env(safe-area-inset-bottom) env(safe-area-inset-left);
+      }
+      header {
+        background: var(--terracota);
+        color: var(--cal);
+        padding: 2.2rem 1.25rem 2.6rem;
+        /* arco inspirado em portais e arcadas */
+        border-radius: 0 0 50% 50% / 0 0 1.6rem 1.6rem;
+      }
+      .wrap {
+        max-width: 42rem;
+        margin: 0 auto;
+      }
+      h1 {
+        font-family: var(--serif);
+        font-weight: 700;
+        font-size: clamp(1.9rem, 7vw, 2.7rem);
+        line-height: 1.1;
+        margin: 0 0 0.4rem;
+      }
+      header p {
+        margin: 0;
+        opacity: 0.92;
+        max-width: 32rem;
+      }
+      .barra {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 1.1rem 1.25rem 0.3rem;
+      }
+      .barra span {
+        font-size: 0.95rem;
+        color: var(--terracota-escura);
+      }
+      #vel {
+        font: 600 0.95rem var(--sans);
+        color: var(--azulejo);
+        background: transparent;
+        border: 2px solid var(--azulejo);
+        border-radius: 999px;
+        padding: 0.45rem 1rem;
+        min-height: 44px;
+        cursor: pointer;
+      }
+      main {
+        padding: 0.5rem 1.25rem 3rem;
+      }
+      .trecho {
+        background: var(--cal);
+        border-left: 6px solid var(--areia-clara);
+        border-radius: 0.35rem 1.4rem 1.4rem 0.35rem;
+        padding: 1.1rem 1.1rem 1.3rem;
+        margin: 1rem 0;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+      .trecho.ativo {
+        border-left-color: var(--terracota);
+        box-shadow: 0 6px 18px rgba(124, 55, 32, 0.18);
+      }
+      .topo {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+      }
+      .play {
+        flex: none;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        border: 0;
+        background: var(--terracota);
+        color: var(--cal);
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+      }
+      .play:active {
+        background: var(--terracota-escura);
+      }
+      .play svg {
+        width: 24px;
+        height: 24px;
+        fill: currentColor;
+      }
+      .play .ic-pause {
+        display: none;
+      }
+      .trecho.tocando .ic-play {
+        display: none;
+      }
+      .trecho.tocando .ic-pause {
+        display: block;
+      }
+      .meta {
+        flex: 1;
+        min-width: 0;
+      }
+      .meta h2 {
+        font-family: var(--serif);
+        font-size: 1.2rem;
+        margin: 0 0 0.2rem;
+      }
+      .tempo {
+        font-size: 0.85rem;
+        color: var(--terracota-escura);
+        font-variant-numeric: tabular-nums;
+      }
+      input[type="range"] {
+        width: 100%;
+        margin: 0.9rem 0 0.2rem;
+        accent-color: var(--terracota);
+        height: 28px;
+      }
+      .texto {
+        font-family: var(--serif);
+        font-size: 1.15rem;
+        line-height: 1.7;
+        margin: 0.6rem 0 0;
+        max-width: 38rem;
+        white-space: pre-line;
+      }
+      .aviso {
+        background: var(--cal);
+        border: 2px dashed var(--terracota);
+        border-radius: 1rem;
+        padding: 1rem 1.2rem;
+        margin-top: 1rem;
+      }
+      button:focus-visible,
+      input:focus-visible {
+        outline: 3px solid var(--azulejo);
+        outline-offset: 3px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <h1>Visita Guiada</h1>
+        <p>
+          Toque no botão para ouvir cada trecho e acompanhe a leitura no texto.
+        </p>
+      </div>
+    </header>
+
+    <div class="wrap">
+      <div class="barra">
+        <span id="contagem"></span>
+        <button id="vel" type="button" aria-label="Alterar velocidade">
+          Velocidade 1×
+        </button>
+      </div>
+      <main id="lista"></main>
+    </div>
+
+    <script>
+      /* Lê "textos.txt" (trechos separados por uma linha com ---)
+   e usa os áudios "audios/audio_01.mp3", "audio_02.mp3"... */
+      const ARQUIVO_TEXTOS = "textos.txt";
+      const PASTA_AUDIOS = "audios/";
+
+      const audio = new Audio();
+      audio.preload = "none";
+      let atual = -1;
+      const cartoes = [];
+      const velocidades = [1, 0.85, 0.7];
+      let iv = 0;
+
+      const fmt = (s) => {
+        if (!isFinite(s)) return "0:00";
+        const m = Math.floor(s / 60),
+          r = Math.floor(s % 60);
+        return m + ":" + String(r).padStart(2, "0");
+      };
+
+      function criar(texto, i) {
+        const n = String(i + 1).padStart(2, "0");
+        const el = document.createElement("section");
+        el.className = "trecho";
+        el.innerHTML = `
+    <div class="topo">
+      <button class="play" type="button" aria-label="Tocar ou pausar o trecho ${i + 1}">
+        <svg class="ic-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="ic-pause" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+      </button>
+      <div class="meta"><h2>Trecho ${i + 1}</h2><div class="tempo">0:00 / 0:00</div></div>
+    </div>
+    <input type="range" min="0" max="100" value="0" step="0.1" disabled aria-label="Posição do áudio">
+    <p class="texto" lang="es"></p>`;
+        el.querySelector(".texto").textContent = texto;
+
+        const c = {
+          el,
+          src: `${PASTA_AUDIOS}audio_${n}.mp3`,
+          btn: el.querySelector(".play"),
+          barra: el.querySelector("input"),
+          tempo: el.querySelector(".tempo"),
+        };
+        c.btn.addEventListener("click", () => alternar(i));
+        c.barra.addEventListener("input", () => {
+          if (atual === i && audio.duration)
+            audio.currentTime = (c.barra.value / 100) * audio.duration;
+        });
+        return c;
+      }
+
+      function alternar(i) {
+        if (atual === i) {
+          audio.paused ? audio.play() : audio.pause();
+          return;
+        }
+        if (atual >= 0) reiniciar(atual);
+        atual = i;
+        audio.src = cartoes[i].src;
+        audio.playbackRate = velocidades[iv];
+        cartoes[i].barra.disabled = false;
+        cartoes[i].el.classList.add("ativo");
+        audio.play();
+      }
+
+      function reiniciar(i) {
+        const c = cartoes[i];
+        c.el.classList.remove("ativo", "tocando");
+        c.barra.value = 0;
+        c.barra.disabled = true;
+        c.tempo.textContent = "0:00 / 0:00";
+      }
+
+      audio.addEventListener("play", () =>
+        cartoes[atual]?.el.classList.add("tocando"),
+      );
+      audio.addEventListener("pause", () =>
+        cartoes[atual]?.el.classList.remove("tocando"),
+      );
+      audio.addEventListener("ended", () => {
+        if (atual >= 0) {
+          const i = atual;
+          atual = -1;
+          reiniciar(i);
+        }
+      });
+      audio.addEventListener("timeupdate", () => {
+        const c = cartoes[atual];
+        if (!c || !audio.duration) return;
+        c.barra.value = (audio.currentTime / audio.duration) * 100;
+        c.tempo.textContent =
+          fmt(audio.currentTime) + " / " + fmt(audio.duration);
+      });
+      audio.addEventListener("error", () => {
+        const c = cartoes[atual];
+        if (c) c.tempo.textContent = "Áudio não encontrado: " + c.src;
+      });
+
+      document.getElementById("vel").addEventListener("click", (e) => {
+        iv = (iv + 1) % velocidades.length;
+        audio.playbackRate = velocidades[iv];
+        e.currentTarget.textContent = "Velocidade " + velocidades[iv] + "×";
+      });
+
+      fetch(ARQUIVO_TEXTOS)
+        .then((r) => {
+          if (!r.ok) throw new Error(r.status);
+          return r.text();
+        })
+        .then((txt) => {
+          const trechos = txt
+            .split(/\r?\n---\r?\n/)
+            .map((t) => t.trim())
+            .filter(Boolean);
+          const lista = document.getElementById("lista");
+          trechos.forEach((t, i) => {
+            const c = criar(t, i);
+            cartoes.push(c);
+            lista.appendChild(c.el);
+          });
+          document.getElementById("contagem").textContent =
+            trechos.length + " trechos";
+        })
+        .catch(() => {
+          document.getElementById("lista").innerHTML =
+            '<div class="aviso">Não consegui carregar o <strong>textos.txt</strong>. ' +
+            "Confira se ele está na mesma pasta do index.html. Se abriu o arquivo direto no computador, " +
+            "use um servidor local (<code>python -m http.server</code>) ou publique no GitHub Pages.</div>";
+        });
+    </script>
+  </body>
+</html>
